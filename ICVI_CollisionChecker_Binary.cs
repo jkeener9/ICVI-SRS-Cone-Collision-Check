@@ -74,10 +74,9 @@ namespace VMS.TPS
 
         private void CalcCollisionPoints(PlotModel model, PlanSetup planSetup, Structure teststructure)
         {
-            var isocoord = planSetup.Beams.First().IsocenterPosition;
-           
             Point3DCollection testarray = teststructure.MeshGeometry.Positions;
-            
+
+            var isocoord = planSetup.Beams.First().IsocenterPosition;
             double IsoX = isocoord.x;
             double IsoY = isocoord.y;
             double IsoZ = isocoord.z;
@@ -96,7 +95,7 @@ namespace VMS.TPS
                 if (tempZ >= IsoZ)  //only check collisions superior to isocenter.  not checking at couch angles <270 and >90
                 {
                     double Distance = Math.Sqrt(Math.Pow(tempX - IsoX, 2) + Math.Pow(tempY - IsoY, 2) + Math.Pow(tempZ - IsoZ, 2));
-                    if (Distance >= 230)   // 230mm provides safety zone to bottom of SRS cone at 250mm distance from iso.  Does not account for diameter of cone (7 cm)
+                    if (Distance >= 230)   // 230mm provides safety zone to bottom of SRS cone at 250mm distance from iso.  Code does not account for diameter of cone (7 cm)
                     {
                         CollisionCoordX.Add(tempX);
                         CollisionCoordY.Add(tempY);
@@ -119,7 +118,7 @@ namespace VMS.TPS
                 {
                     couchang = couchang - 180;
                 }
-                if (couchang >= 359.9)
+                if (couchang >= 359.9)  //only doing this for display purposes
                 {
                     couchang = couchang - 360;
                 }
@@ -141,7 +140,7 @@ namespace VMS.TPS
                 {
                     gantryang = 360 - gantryang;
                 }
-                if (gantryang >= 359.9)
+                if (gantryang >= 359.9)  //only doing this for display purposes
                 {
                     gantryang = gantryang - 360;
                 }
@@ -153,7 +152,7 @@ namespace VMS.TPS
 
             int collpointsize = 4;
             var collisionSeries = CreateSeries(CollisionCoordCouchAng, CollisionCoordGantryAng, collpointsize);
-            collisionSeries.Title = teststructure.Id; // + "Collision Points";
+            collisionSeries.Title = teststructure.Id; 
             model.Series.Add(collisionSeries);          
         }
 
