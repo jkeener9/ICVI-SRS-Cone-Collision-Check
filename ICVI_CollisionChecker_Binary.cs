@@ -61,6 +61,8 @@ namespace VMS.TPS
 
         private void TestStructures(PlotModel model, PlanSetup planSetup)
         {
+
+            // add error checking here
             Structure Bodystruct = planSetup.StructureSet.Structures.Where(s => s.Id == "BODY").Single();  //Checks for collisions with Body
             Structure VRTstruct = planSetup.StructureSet.Structures.Where(s => s.Id == "VRT").Single();   //Checks for collisions with VisionRT head adjuster structure, named VRT
             Structure Couchstruct = planSetup.StructureSet.Structures.Where(s => s.Id == "CouchSurface").Single();   //Checks for collisions with Couch (if present)
