@@ -62,7 +62,7 @@ namespace VMS.TPS
 
         private void CalcCollisionPoints(PlotModel model, PlanSetup planSetup)
         {
-            Structure VRTstruct = planSetup.StructureSet.Structures.Where(s => s.Id == "VRT").Single();
+            Structure VRTstruct = planSetup.StructureSet.Structures.Where(s => s.Id == "VRT").Single();  //Checks for collisions with VisionRT head adjuster structure, named VRT
             var isocoord = planSetup.Beams.First().IsocenterPosition;
            
             Point3DCollection VRTarray = VRTstruct.MeshGeometry.Positions;
