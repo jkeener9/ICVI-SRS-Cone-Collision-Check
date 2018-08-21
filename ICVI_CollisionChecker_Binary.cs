@@ -52,44 +52,53 @@ namespace VMS.TPS
         {
             var model = new PlotModel();
             AddAxes(model);
-            CalcCollisionPoints(model, planSetup);
+            TestStructures(model, planSetup);
             CalcPlannedAngles(model, planSetup);
             model.LegendPlacement = LegendPlacement.Outside;
             model.LegendPosition = LegendPosition.RightTop;
             return model;
         }
 
-
-        private void CalcCollisionPoints(PlotModel model, PlanSetup planSetup)
+        private void TestStructures(PlotModel model, PlanSetup planSetup)
         {
-            Structure VRTstruct = planSetup.StructureSet.Structures.Where(s => s.Id == "VRT").Single();  //Checks for collisions with VisionRT head adjuster structure, named VRT
+            Structure Bodystruct = planSetup.StructureSet.Structures.Where(s => s.Id == "BODY").Single();  //Checks for collisions with Body
+            Structure VRTstruct = planSetup.StructureSet.Structures.Where(s => s.Id == "VRT").Single();   //Checks for collisions with VisionRT head adjuster structure, named VRT
+            Structure Couchstruct = planSetup.StructureSet.Structures.Where(s => s.Id == "CouchSurface").Single();   //Checks for collisions with Couch (if present)
+
+            CalcCollisionPoints(model, planSetup, Bodystruct);
+            CalcCollisionPoints(model, planSetup, VRTstruct);
+            CalcCollisionPoints(model, planSetup, Couchstruct);
+        }
+
+        private void CalcCollisionPoints(PlotModel model, PlanSetup planSetup, Structure teststructure)
+        {
             var isocoord = planSetup.Beams.First().IsocenterPosition;
            
-            Point3DCollection VRTarray = VRTstruct.MeshGeometry.Positions;
+            Point3DCollection testarray = teststructure.MeshGeometry.Positions;
             
             double IsoX = isocoord.x;
             double IsoY = isocoord.y;
             double IsoZ = isocoord.z;
 
-            int VRTarrayLength = VRTarray.Count;
+            int structarrayLength = testarray.Count;
             List<double> CollisionCoordX = new List<double>();
             List<double> CollisionCoordY = new List<double>();
             List<double> CollisionCoordZ = new List<double>();
             int i = 0;
-            while (i < VRTarrayLength)
+            while (i < structarrayLength)
             {
-                double VRTtempX = VRTarray[i].X;
-                double VRTtempY = VRTarray[i].Y;
-                double VRTtempZ = VRTarray[i].Z;
+                double tempX = testarray[i].X;
+                double tempY = testarray[i].Y;
+                double tempZ = testarray[i].Z;
 
-                if (VRTtempZ >= IsoZ)  //only check collisions superior to isocenter.  not checking at couch angles <270 and >90
+                if (tempZ >= IsoZ)  //only check collisions superior to isocenter.  not checking at couch angles <270 and >90
                 {
-                    double Distance = Math.Sqrt(Math.Pow(VRTtempX - IsoX, 2) + Math.Pow(VRTtempY - IsoY, 2) + Math.Pow(VRTtempZ - IsoZ, 2));
+                    double Distance = Math.Sqrt(Math.Pow(tempX - IsoX, 2) + Math.Pow(tempY - IsoY, 2) + Math.Pow(tempZ - IsoZ, 2));
                     if (Distance >= 230)   // 230mm provides safety zone to bottom of SRS cone at 250mm distance from iso.  Does not account for diameter of cone (7 cm)
                     {
-                        CollisionCoordX.Add(VRTtempX);
-                        CollisionCoordY.Add(VRTtempY);
-                        CollisionCoordZ.Add(VRTtempZ);
+                        CollisionCoordX.Add(tempX);
+                        CollisionCoordY.Add(tempY);
+                        CollisionCoordZ.Add(tempZ);
                     }
                 }
                 i++;
@@ -115,7 +124,7 @@ namespace VMS.TPS
                 CollisionCoordCouchAng.Add(couchang);
 
                 //Dicom Z + to superior, Y + to posterior, X + to Left (HFS)
-                //CW rotation transformation around Y axis by angle pi to transform into plane of gantry arc. 
+                //rotation transformation around Y axis by angle pi to transform into plane of gantry arc. 
                 double xprime = CollisionCoordX[ii] * Math.Cos(rho) + CollisionCoordZ[ii] * Math.Sin(rho);
                 double yprime = CollisionCoordY[ii];
 
@@ -141,9 +150,8 @@ namespace VMS.TPS
             }
 
             int collpointsize = 4;
-            int collcolorValue = 1;
-            var collisionSeries = CreateSeries(CollisionCoordCouchAng, CollisionCoordGantryAng, collpointsize, collcolorValue);
-            collisionSeries.Title = "Collision Points";
+            var collisionSeries = CreateSeries(CollisionCoordCouchAng, CollisionCoordGantryAng, collpointsize);
+            collisionSeries.Title = teststructure.Id; // + "Collision Points";
             model.Series.Add(collisionSeries);          
         }
 
@@ -190,22 +198,21 @@ namespace VMS.TPS
                 n++;
             }
             int planpointsize = 2;
-            int plancolorValue = 2;
-            var plannedSeries = CreateSeries(PlannedCouchAng, PlannedGantryAng, planpointsize, plancolorValue);
+            var plannedSeries = CreateSeries(PlannedCouchAng, PlannedGantryAng, planpointsize);
 
             plannedSeries.Title = "Planned Arcs";
             model.Series.Add(plannedSeries);
         }
 
 
-        private OxyPlot.Series.ScatterSeries CreateSeries(List<double> CouchAng, List<double> GantryAng, int size, int colorValue)
+        private OxyPlot.Series.ScatterSeries CreateSeries(List<double> CouchAng, List<double> GantryAng, int size)
         {
             var scatterSeries = new OxyPlot.Series.ScatterSeries();
             
             int CoordLength = CouchAng.Count;
             for (int iii= 0;  iii < CoordLength; iii++)
             {
-                var point = new ScatterPoint(CouchAng[iii], GantryAng[iii], size, colorValue);
+                var point = new ScatterPoint(CouchAng[iii], GantryAng[iii], size);
                 scatterSeries.Points.Add(point);
             }
             return scatterSeries;
