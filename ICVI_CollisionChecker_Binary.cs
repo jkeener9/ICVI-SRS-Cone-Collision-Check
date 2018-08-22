@@ -61,15 +61,48 @@ namespace VMS.TPS
 
         private void TestStructures(PlotModel model, PlanSetup planSetup)
         {
+            // error checking
+            if (planSetup == null)
+            {
+                MessageBox.Show("This script requires a plan");
+                return;
+            }
+            if (planSetup.StructureSet == null)
+            {
+                MessageBox.Show("This script requires a structure set");
+                return;
+            }
 
-            // add error checking here
-            Structure Bodystruct = planSetup.StructureSet.Structures.Where(s => s.Id == "BODY").Single();  //Checks for collisions with Body
-            Structure VRTstruct = planSetup.StructureSet.Structures.Where(s => s.Id == "VRT").Single();   //Checks for collisions with VisionRT head adjuster structure, named VRT
-            Structure Couchstruct = planSetup.StructureSet.Structures.Where(s => s.Id == "CouchSurface").Single();   //Checks for collisions with Couch (if present)
+            //Checks for collisions with Body, VisionRT head adjuster structure, named VRT, and CouchSurface, if present
+            var Body = planSetup.StructureSet.Structures.Where(s => s.Id == "BODY");  
+            if (Body.Any())
+            {
+                Structure Bodystruct = Body.Single();
+                if (Bodystruct.IsEmpty != true)
+                {
+                    CalcCollisionPoints(model, planSetup, Bodystruct);
+                }
+            }
 
-            CalcCollisionPoints(model, planSetup, Bodystruct);
-            CalcCollisionPoints(model, planSetup, VRTstruct);
-            CalcCollisionPoints(model, planSetup, Couchstruct);
+            var VRT = planSetup.StructureSet.Structures.Where(s => s.Id == "VRT");   
+            if (VRT.Any())
+            {
+                Structure VRTstruct = VRT.Single();
+                if (VRTstruct.IsEmpty != true)
+                {
+                    CalcCollisionPoints(model, planSetup, VRTstruct);
+                }
+            }
+
+            var Couch = planSetup.StructureSet.Structures.Where(s => s.Id == "CouchSurface");   
+            if (Couch.Any())
+            {
+                Structure Couchstruct = Couch.Single();
+                if (Couchstruct.IsEmpty != true)
+                {
+                    CalcCollisionPoints(model, planSetup, Couchstruct);
+                }
+            }                       
         }
 
         private void CalcCollisionPoints(PlotModel model, PlanSetup planSetup, Structure teststructure)
@@ -163,6 +196,11 @@ namespace VMS.TPS
             List<double> PlannedGantryAng = new List<double>();
 
             int numberofbeams = planSetup.Beams.Count();
+            if (numberofbeams == 0)
+            {
+                return;
+            }
+
             int n = 0;
             while (n < numberofbeams)
             {
@@ -170,32 +208,37 @@ namespace VMS.TPS
 
                 if (beam.IsSetupField == false)
                 {
-                    double CouchAng = beam.ControlPoints.First().PatientSupportAngle;
-                    double GantryStartAng = beam.ControlPoints.First().GantryAngle;
-                    double GantryStopAng = beam.ControlPoints.Last().GantryAngle;
-                    string GantryRotationDir = beam.GantryDirection.ToString();
-
-                    if (GantryRotationDir == "Clockwise")
+                    String beamtype = beam.Technique.Id;
+                    if (beamtype == "SRS ARC")   // only plot arcs
                     {
-                        int nn = Convert.ToInt32(GantryStartAng);
-                        while (nn <= GantryStopAng)
+                        double CouchAng = beam.ControlPoints.First().PatientSupportAngle;
+                        double GantryStartAng = beam.ControlPoints.First().GantryAngle;
+                        double GantryStopAng = beam.ControlPoints.Last().GantryAngle;
+                        string GantryRotationDir = beam.GantryDirection.ToString();
+
+                        if (GantryRotationDir == "Clockwise")
                         {
-                            PlannedCouchAng.Add(CouchAng);
-                            PlannedGantryAng.Add(nn);
-                            nn++;
+                            int nn = Convert.ToInt32(GantryStartAng);
+                            while (nn <= GantryStopAng)
+                            {
+                                PlannedCouchAng.Add(CouchAng);
+                                PlannedGantryAng.Add(nn);
+                                nn++;
+                            }
+                        }
+                        else if (GantryRotationDir == "CounterClockwise")
+                        {
+                            int nn = Convert.ToInt32(GantryStartAng);
+                            while (nn >= GantryStopAng)
+                            {
+                                PlannedCouchAng.Add(CouchAng);
+                                PlannedGantryAng.Add(nn);
+                                nn--;
+                            }
                         }
                     }
-                    else if (GantryRotationDir == "CounterClockwise")
-                    {
-                        int nn = Convert.ToInt32(GantryStartAng);
-                        while (nn >= GantryStopAng)
-                        {
-                            PlannedCouchAng.Add(CouchAng);
-                            PlannedGantryAng.Add(nn);
-                            nn--;
-                        }
-                    }              
                 }
+    
                 n++;
             }
             int planpointsize = 2;
