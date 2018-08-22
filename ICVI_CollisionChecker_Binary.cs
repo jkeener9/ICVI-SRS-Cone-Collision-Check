@@ -73,7 +73,7 @@ namespace VMS.TPS
                 return;
             }
 
-            //Checks for collisions with Body, VisionRT head adjuster structure, named VRT, and CouchSurface, if present
+            //Checks for collisions with Body, VisionRT head adjuster structure named VRT, and CouchSurface, if present
             var Body = planSetup.StructureSet.Structures.Where(s => s.Id == "BODY");  
             if (Body.Any())
             {
@@ -109,84 +109,93 @@ namespace VMS.TPS
         {
             Point3DCollection testarray = teststructure.MeshGeometry.Positions;
 
-            var isocoord = planSetup.Beams.First().IsocenterPosition;
-            double IsoX = isocoord.x;
-            double IsoY = isocoord.y;
-            double IsoZ = isocoord.z;
-
-            int structarrayLength = testarray.Count;
-            List<double> CollisionCoordX = new List<double>();
-            List<double> CollisionCoordY = new List<double>();
-            List<double> CollisionCoordZ = new List<double>();
-            int i = 0;
-            while (i < structarrayLength)
+            if (planSetup.Beams.Any())
             {
-                double tempX = testarray[i].X;
-                double tempY = testarray[i].Y;
-                double tempZ = testarray[i].Z;
+                var isocoord = planSetup.Beams.First().IsocenterPosition;
+                double IsoX = isocoord.x;
+                double IsoY = isocoord.y;
+                double IsoZ = isocoord.z;
 
-                if (tempZ >= IsoZ)  //only check collisions superior to isocenter.  not checking at couch angles <270 and >90
+                int structarrayLength = testarray.Count;
+                List<double> CollisionCoordX = new List<double>();
+                List<double> CollisionCoordY = new List<double>();
+                List<double> CollisionCoordZ = new List<double>();
+                int i = 0;
+                while (i < structarrayLength)
                 {
-                    double Distance = Math.Sqrt(Math.Pow(tempX - IsoX, 2) + Math.Pow(tempY - IsoY, 2) + Math.Pow(tempZ - IsoZ, 2));
-                    if (Distance >= 230)   // 230mm provides safety zone to bottom of SRS cone at 250mm distance from iso.  Code does not account for diameter of cone (7 cm)
+                    double tempX = testarray[i].X;
+                    double tempY = testarray[i].Y;
+                    double tempZ = testarray[i].Z;
+
+                    if (tempZ >= IsoZ)  //only check collisions superior to isocenter.  not checking at couch angles <270 and >90
                     {
-                        CollisionCoordX.Add(tempX);
-                        CollisionCoordY.Add(tempY);
-                        CollisionCoordZ.Add(tempZ);
+                        double Distance = Math.Sqrt(Math.Pow(tempX - IsoX, 2) + Math.Pow(tempY - IsoY, 2) + Math.Pow(tempZ - IsoZ, 2));
+                        if (Distance >= 230)   // 230mm provides safety zone to bottom of SRS cone at 250mm distance from iso.  Code does not account for diameter of cone (7 cm)
+                        {
+                            CollisionCoordX.Add(tempX);
+                            CollisionCoordY.Add(tempY);
+                            CollisionCoordZ.Add(tempZ);
+                        }
                     }
+                    i++;
                 }
-                i++;
+
+                List<double> CollisionCoordCouchAng = new List<double>();
+                List<double> CollisionCoordGantryAng = new List<double>();
+                int CoordLength = CollisionCoordX.Count;
+                int ii = 0;
+                while (ii < CoordLength)
+                {
+                    double rho = (Math.Atan2(CollisionCoordZ[ii], CollisionCoordX[ii]));  //in X-Z plane (Y=0), angle rho from X-axis used to get couch angle
+                    double couchang = 360 - rho * (180 / Math.PI);
+
+                    if (couchang <= 270)
+                    {
+                        couchang = couchang - 180;
+                    }
+                    if (couchang >= 359.9)  //only doing this for display purposes
+                    {
+                        couchang = couchang - 360;
+                    }
+                    CollisionCoordCouchAng.Add(couchang);
+
+                    //Dicom Z + to superior, Y + to posterior, X + to Left (HFS)
+                    //rotation transformation around Y axis by angle pi to transform into plane of gantry arc. 
+                    double xprime = CollisionCoordX[ii] * Math.Cos(rho) + CollisionCoordZ[ii] * Math.Sin(rho);
+                    double yprime = CollisionCoordY[ii];
+
+                    double phi = Math.Atan2(yprime, xprime) * (180 / Math.PI);   //atan2 returns angle from x' axis.   
+
+                    double gantryang = phi + 90;   //convert from spherical-polar(dicom) to IEC61217
+                    if (gantryang <= 0)
+                    {
+                        gantryang = gantryang + 360;
+                    }
+                    if (couchang <= 90)
+                    {
+                        gantryang = 360 - gantryang;
+                    }
+                    if (gantryang >= 359.9)  //only doing this for display purposes
+                    {
+                        gantryang = gantryang - 360;
+                    }
+
+                    CollisionCoordGantryAng.Add(gantryang);
+
+                    ii++;
+                }
+
+                int collpointsize = 4;
+                var collisionSeries = CreateSeries(CollisionCoordCouchAng, CollisionCoordGantryAng, collpointsize);
+                collisionSeries.Title = teststructure.Id;
+                model.Series.Add(collisionSeries);            
             }
-            
-            List<double> CollisionCoordCouchAng = new List<double>();
-            List<double> CollisionCoordGantryAng = new List<double>();
-            int CoordLength = CollisionCoordX.Count;
-            int ii = 0;
-            while (ii < CoordLength)
+            else
             {
-                double rho = (Math.Atan2(CollisionCoordZ[ii], CollisionCoordX[ii]));  //in X-Z plane (Y=0), angle rho from X-axis used to get couch angle
-                double couchang = 360 - rho * (180 / Math.PI);
-
-                if (couchang <= 270)
-                {
-                    couchang = couchang - 180;
-                }
-                if (couchang >= 359.9)  //only doing this for display purposes
-                {
-                    couchang = couchang - 360;
-                }
-                CollisionCoordCouchAng.Add(couchang);
-
-                //Dicom Z + to superior, Y + to posterior, X + to Left (HFS)
-                //rotation transformation around Y axis by angle pi to transform into plane of gantry arc. 
-                double xprime = CollisionCoordX[ii] * Math.Cos(rho) + CollisionCoordZ[ii] * Math.Sin(rho);
-                double yprime = CollisionCoordY[ii];
-
-                double phi = Math.Atan2(yprime, xprime) * (180 / Math.PI);   //atan2 returns angle from x' axis.   
-
-                double gantryang = phi + 90;   //convert from spherical-polar(dicom) to IEC61217
-                if (gantryang <= 0)
-                {
-                    gantryang = gantryang + 360;
-                }
-                if (couchang <= 90)
-                {
-                    gantryang = 360 - gantryang;
-                }
-                if (gantryang >= 359.9)  //only doing this for display purposes
-                {
-                    gantryang = gantryang - 360;
-                }
-
-                CollisionCoordGantryAng.Add(gantryang);
-
-                ii++;
+                MessageBox.Show("This script requires beams and isocenter");
+                return;
             }
-
-            int collpointsize = 4;
-            var collisionSeries = CreateSeries(CollisionCoordCouchAng, CollisionCoordGantryAng, collpointsize);
-            collisionSeries.Title = teststructure.Id; 
-            model.Series.Add(collisionSeries);          
+                  
         }
 
 
@@ -195,6 +204,11 @@ namespace VMS.TPS
             List<double> PlannedCouchAng = new List<double>();
             List<double> PlannedGantryAng = new List<double>();
 
+            if (planSetup == null)  //error checks
+            {
+                MessageBox.Show("This script requires a plan");
+                return;
+            }
             int numberofbeams = planSetup.Beams.Count();
             if (numberofbeams == 0)
             {
@@ -202,7 +216,7 @@ namespace VMS.TPS
             }
 
             int n = 0;
-            while (n < numberofbeams)
+            while (n < numberofbeams)   //loop through beams
             {
                 var beam = planSetup.Beams.ElementAt(n);
 
@@ -236,6 +250,10 @@ namespace VMS.TPS
                                 nn--;
                             }
                         }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Beam type should be SRS ARC");
                     }
                 }
     
