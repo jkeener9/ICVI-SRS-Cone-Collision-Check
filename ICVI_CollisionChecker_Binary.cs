@@ -146,13 +146,17 @@ namespace VMS.TPS
                 int ii = 0;
                 while (ii < CoordLength)
                 {
-                    double rho = (Math.Atan2(CollisionCoordZ[ii], CollisionCoordX[ii]));  //in X-Z plane (Y=0), angle rho from X-axis used to get couch angle
-                    double couchang = 360 - rho * (180 / Math.PI);
-
-                    if (couchang <= 270)
+                    double zdist = CollisionCoordZ[ii] - IsoZ;
+                    double xdist = CollisionCoordX[ii] - IsoX;
+                    double rho = (Math.Atan2(zdist, xdist));  //in X-Z plane (Y=0), angle rho from X-axis used to get couch angle
+                    
+                    double couchang = 360 - rho * (180 / Math.PI);  // for rho <= 90deg
+                        
+                    if (rho > Math.PI / 2)
                     {
-                        couchang = couchang - 180;
+                        couchang = 180 - rho * (180 / Math.PI);
                     }
+                    
                     if (couchang >= 359.9)  //only doing this for display purposes
                     {
                         couchang = couchang - 360;
