@@ -130,7 +130,7 @@ namespace VMS.TPS
                     if (tempZ >= IsoZ)  //only check collisions superior to isocenter.  not checking at couch angles <270 and >90
                     {
                         double Distance = Math.Sqrt(Math.Pow(tempX - IsoX, 2) + Math.Pow(tempY - IsoY, 2) + Math.Pow(tempZ - IsoZ, 2));
-                        if (Distance >= 230)   // 230mm provides safety zone to bottom of SRS cone at 250mm distance from iso.  Code does not account for diameter of cone (7 cm)
+                        if (Distance >= 240)   // 240mm provides safety zone to bottom of SRS cone at 250mm distance from iso.  Code does not account for diameter of cone (7 cm)
                         {
                             CollisionCoordX.Add(tempX);
                             CollisionCoordY.Add(tempY);
