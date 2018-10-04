@@ -164,9 +164,9 @@ namespace VMS.TPS
                     CollisionCoordCouchAng.Add(couchang);
 
                     //Dicom Z + to superior, Y + to posterior, X + to Left (HFS)
-                    //rotation transformation around Y axis by angle pi to transform into plane of gantry arc. 
-                    double xprime = CollisionCoordX[ii] * Math.Cos(rho) + CollisionCoordZ[ii] * Math.Sin(rho);
-                    double yprime = CollisionCoordY[ii];
+                    //rotation transformation around Y axis by angle phi to transform into plane of gantry arc. 
+                    double xprime = (CollisionCoordX[ii]-IsoX) * Math.Cos(rho) + (CollisionCoordZ[ii]-IsoZ) * Math.Sin(rho);   //need to rotate around iso, not around dicom 0
+                    double yprime = CollisionCoordY[ii]-IsoY;
 
                     double phi = Math.Atan2(yprime, xprime) * (180 / Math.PI);   //atan2 returns angle from x' axis.   
 
