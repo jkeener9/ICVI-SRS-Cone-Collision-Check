@@ -1,0 +1,7 @@
+C:\Users\jdkd11\Source\Repos\plugins\ICVI_CollisionChecker_Binary.esapi.dll
+C:\Users\jdkd11\Source\Repos\plugins\ICVI_CollisionChecker_Binary.esapi.pdb
+C:\Users\jdkd11\Source\Repos\jkeener9\ICVI-SRS-Cone-Collision-Check\obj\Debug\ICVI_CollisionChecker_Binary.csproj.AssemblyReference.cache
+C:\Users\jdkd11\Source\Repos\jkeener9\ICVI-SRS-Cone-Collision-Check\obj\Debug\ICVI_CollisionChecker_Binary.csproj.CoreCompileInputs.cache
+C:\Users\jdkd11\Source\Repos\jkeener9\ICVI-SRS-Cone-Collision-Check\obj\Debug\ICVI_CollisionChecker_Binary.csproj.CopyComplete
+C:\Users\jdkd11\Source\Repos\jkeener9\ICVI-SRS-Cone-Collision-Check\obj\Debug\ICVI_CollisionChecker_Binary.esapi.dll
+C:\Users\jdkd11\Source\Repos\jkeener9\ICVI-SRS-Cone-Collision-Check\obj\Debug\ICVI_CollisionChecker_Binary.esapi.pdb
