@@ -7,10 +7,12 @@ using System.IO;
 using VMS.TPS.Common.Model.API;
 using VMS.TPS.Common.Model.Types;
 using System.Windows.Media.Media3D;
-using OxyPlot;
+//using OxyPlot;
 using OxyPlot.Wpf;
 using OxyPlot.Series;
 using OxyPlot.Axes;
+using OxyPlot.Legends;
+using OxyPlot;
 
 
 namespace VMS.TPS
@@ -54,8 +56,9 @@ namespace VMS.TPS
             AddAxes(model);
             TestStructures(model, planSetup);
             CalcPlannedAngles(model, planSetup);
-            model.LegendPlacement = LegendPlacement.Outside;
-            model.LegendPosition = LegendPosition.RightTop;
+            model.Legends.Add(new Legend() { LegendPosition = LegendPosition.RightTop });
+            //model.LegendPlacement = LegendPlacement.Outside;  //removed in OxyPlot 2.0
+            //model.LegendPosition = LegendPosition.RightTop;
             return model;
         }
 
@@ -271,9 +274,9 @@ namespace VMS.TPS
         }
 
 
-        private OxyPlot.Series.ScatterSeries CreateSeries(List<double> CouchAng, List<double> GantryAng, int size)
+        private ScatterSeries CreateSeries(List<double> CouchAng, List<double> GantryAng, int size)
         {
-            var scatterSeries = new OxyPlot.Series.ScatterSeries();
+            var scatterSeries = new ScatterSeries();
             
             int CoordLength = CouchAng.Count;
             for (int iii= 0;  iii < CoordLength; iii++)
@@ -288,7 +291,7 @@ namespace VMS.TPS
         private static void AddAxes(PlotModel model)
         {
             // Add x- axis
-            model.Axes.Add(new OxyPlot.Axes.LinearAxis
+            model.Axes.Add(new LinearAxis
             {
                 Title = "Couch Angle",
                 Position = AxisPosition.Bottom,
@@ -296,7 +299,7 @@ namespace VMS.TPS
                 Maximum = 360,
             });
             // Add y- axis
-            model.Axes.Add(new OxyPlot.Axes.LinearAxis
+            model.Axes.Add(new LinearAxis
             {
                 Title = "Gantry Angle",
                 Position = AxisPosition.Left,

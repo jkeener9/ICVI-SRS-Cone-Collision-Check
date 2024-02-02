@@ -7655,6 +7655,60 @@
             On .NET4.5 and later, this directly returns the <paramref name="array"/>.
             </returns>
         </member>
+        <member name="T:OxyPlot.Net40Compatibility.ReadOnlyListWrapper`1">
+            <summary>
+            Represents a wrapper around a <see cref="T:System.Collections.Generic.List`1"/> which implements <see cref="T:System.Collections.Generic.IReadOnlyList`1"/>.
+            </summary>
+            <typeparam name="T">The type of the list.</typeparam>
+        </member>
+        <member name="M:OxyPlot.Net40Compatibility.ReadOnlyListWrapper`1.#ctor(System.Collections.Generic.IList{`0})">
+            <summary>
+            Initializes a new instance of the <see cref="T:OxyPlot.Net40Compatibility.ReadOnlyListWrapper`1"/> class.
+            </summary>
+            <param name="source">The source list.</param>
+        </member>
+        <member name="P:OxyPlot.Net40Compatibility.ReadOnlyListWrapper`1.Item(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="P:OxyPlot.Net40Compatibility.ReadOnlyListWrapper`1.System#Collections#Generic#IList{T}#Item(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="P:OxyPlot.Net40Compatibility.ReadOnlyListWrapper`1.Count">
+            <inheritdoc/>
+        </member>
+        <member name="P:OxyPlot.Net40Compatibility.ReadOnlyListWrapper`1.IsReadOnly">
+            <inheritdoc/>
+        </member>
+        <member name="M:OxyPlot.Net40Compatibility.ReadOnlyListWrapper`1.Add(`0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:OxyPlot.Net40Compatibility.ReadOnlyListWrapper`1.Clear">
+            <inheritdoc/>
+        </member>
+        <member name="M:OxyPlot.Net40Compatibility.ReadOnlyListWrapper`1.Contains(`0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:OxyPlot.Net40Compatibility.ReadOnlyListWrapper`1.CopyTo(`0[],System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:OxyPlot.Net40Compatibility.ReadOnlyListWrapper`1.GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:OxyPlot.Net40Compatibility.ReadOnlyListWrapper`1.IndexOf(`0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:OxyPlot.Net40Compatibility.ReadOnlyListWrapper`1.Insert(System.Int32,`0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:OxyPlot.Net40Compatibility.ReadOnlyListWrapper`1.Remove(`0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:OxyPlot.Net40Compatibility.ReadOnlyListWrapper`1.RemoveAt(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:OxyPlot.Net40Compatibility.ReadOnlyListWrapper`1.System#Collections#IEnumerable#GetEnumerator">
+            <inheritdoc/>
+        </member>
         <member name="T:OxyPlot.PageSize">
             <summary>
             Defines the page size.
@@ -20938,6 +20992,30 @@
             Releases unmanaged and - optionally - managed resources
             </summary>
             <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        </member>
+        <member name="T:System.Collections.Generic.IReadOnlyCollection`1">
+            <summary>
+            Defines a read-only collection of elements.
+            </summary>
+            <typeparam name="T">The element type.</typeparam>
+        </member>
+        <member name="P:System.Collections.Generic.IReadOnlyCollection`1.Count">
+            <summary>
+            The number of elements in the collection.
+            </summary>
+        </member>
+        <member name="T:System.Collections.Generic.IReadOnlyList`1">
+            <summary>
+            Defines a read-only list of elements.
+            </summary>
+            <typeparam name="T">The element type.</typeparam>
+        </member>
+        <member name="P:System.Collections.Generic.IReadOnlyList`1.Item(System.Int32)">
+            <summary>
+            Gets the element at the specified index in the list.
+            </summary>
+            <param name="index">The index.</param>
+            <returns>The element at the specified index in the list.</returns>
         </member>
     </members>
 </doc>

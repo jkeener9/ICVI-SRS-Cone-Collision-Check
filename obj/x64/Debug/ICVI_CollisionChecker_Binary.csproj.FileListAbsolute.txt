@@ -2,12 +2,12 @@ C:\Users\jdkd11\source\repos\jkeener9\ICVI-SRS-Cone-Collision-Check\bin\x64\Debu
 C:\Users\jdkd11\source\repos\jkeener9\ICVI-SRS-Cone-Collision-Check\bin\x64\Debug\ICVI_CollisionChecker_Binary.esapi.pdb
 C:\Users\jdkd11\source\repos\jkeener9\ICVI-SRS-Cone-Collision-Check\bin\x64\Debug\OxyPlot.dll
 C:\Users\jdkd11\source\repos\jkeener9\ICVI-SRS-Cone-Collision-Check\bin\x64\Debug\OxyPlot.Wpf.dll
-C:\Users\jdkd11\source\repos\jkeener9\ICVI-SRS-Cone-Collision-Check\bin\x64\Debug\OxyPlot.pdb
 C:\Users\jdkd11\source\repos\jkeener9\ICVI-SRS-Cone-Collision-Check\bin\x64\Debug\OxyPlot.xml
-C:\Users\jdkd11\source\repos\jkeener9\ICVI-SRS-Cone-Collision-Check\bin\x64\Debug\OxyPlot.Wpf.pdb
 C:\Users\jdkd11\source\repos\jkeener9\ICVI-SRS-Cone-Collision-Check\bin\x64\Debug\OxyPlot.Wpf.xml
 C:\Users\jdkd11\source\repos\jkeener9\ICVI-SRS-Cone-Collision-Check\obj\x64\Debug\ICVI_CollisionChecker_Binary.csproj.AssemblyReference.cache
 C:\Users\jdkd11\source\repos\jkeener9\ICVI-SRS-Cone-Collision-Check\obj\x64\Debug\ICVI_CollisionChecker_Binary.csproj.CoreCompileInputs.cache
 C:\Users\jdkd11\source\repos\jkeener9\ICVI-SRS-Cone-Collision-Check\obj\x64\Debug\ICVI_CollisionChecker_Binary.csproj.CopyComplete
 C:\Users\jdkd11\source\repos\jkeener9\ICVI-SRS-Cone-Collision-Check\obj\x64\Debug\ICVI_CollisionChecker_Binary.esapi.dll
 C:\Users\jdkd11\source\repos\jkeener9\ICVI-SRS-Cone-Collision-Check\obj\x64\Debug\ICVI_CollisionChecker_Binary.esapi.pdb
+C:\Users\jdkd11\source\repos\jkeener9\ICVI-SRS-Cone-Collision-Check\bin\x64\Debug\OxyPlot.Wpf.Shared.dll
+C:\Users\jdkd11\source\repos\jkeener9\ICVI-SRS-Cone-Collision-Check\bin\x64\Debug\OxyPlot.Wpf.Shared.xml
